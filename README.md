@@ -34,92 +34,86 @@ A interface (Frontend) utiliza uma abordagem de **Assinatura Direta via Chave Pr
 ├── hardhat.config.js          # Configuração da Blockchain Local
 └── start_dev.sh               # Script de automação do ciclo de desenvolvimento
 ```
-⚙️ Pré-requisitos
+## ⚙️ Pré-requisitos
 
-    Node.js (Versão 16 ou superior)
+* Node.js (Versão 16 ou superior)
+* NPM ou Yarn
 
-    NPM ou Yarn
+## 📦 Instalação
 
-📦 Instalação
+1) Clone o repositório:
+    ```bash
+    git clone [https://github.com/seu-usuario/seu-repo.git](https://github.com seu-usuario/seu-repo.git)
+    cd seu-repo
+    ```
 
-    Clone o repositório:
-    Bash
-
-git clone [https://github.com/seu-usuario/seu-repo.git](https://github.com/seu-usuario/seu-repo.git)
-cd seu-repo
-
-Instale as dependências do Backend (Hardhat):
-Bash
-
-npm install
-
-Instale as dependências do Frontend (React):
-Bash
-
+2. Instale as dependências do Backend (Hardhat):
+    ```bash
+    npm install
+    ```
+3. Instale as dependências do Frontend (React):
+    ```bash
     cd frontend
     npm install
     cd ..
+    ```
 
-▶️ Como Rodar o Projeto
+## ▶️ Como Rodar o Projeto
 
 Para rodar este projeto localmente, você precisará de três terminais (ou abas).
 
-Passo 1: Iniciar a Blockchain Local (Terminal 1)
+**Passo 1:** Iniciar a Blockchain Local (Terminal 1)
 
 Este comando inicia um nó Ethereum local e gera 20 contas de teste com saldo fictício.
-Bash
 
+```bash
 npx hardhat node
+```    
 
-⚠️ IMPORTANTE: Não feche este terminal. Se fechar, a blockchain "reseta".
+**⚠️ IMPORTANTE:** Não feche este terminal. Se fechar, a blockchain "reseta".
 
-Passo 2: Fazer o Deploy do Contrato (Terminal 2)
+**Passo 2:** Fazer o Deploy do Contrato (Terminal 2)
 
 Em vez de rodar o deploy manualmente, use o script de automação que criamos. Ele compila o contrato, faz o deploy e atualiza automaticamente o arquivo de configuração do React.
-Bash
 
+```bash
 # No Linux/Mac/Git Bash
 ./start_dev.sh
 
 # Ou manualmente via Hardhat:
-# npx hardhat run scripts/deploy.js --network localhost
+# npx hardhat run ignition/modules/deploy.js --network localhost
+```
 
-Passo 3: Iniciar o Frontend (Terminal 3)
-
-Bash
-
+**Passo 3:** Iniciar o Frontend (Terminal 3)
+```bash
 cd frontend
 npm start
-
+```
 O projeto abrirá em http://localhost:3000.
 
-🧪 Como Usar (Guia de Teste)
+## 🧪 Como Usar (Guia de Teste)
 
-    Vá ao Terminal 1 (onde o npx hardhat node está rodando).
+1. Vá ao Terminal 1 (onde o npx hardhat node está rodando).
 
-    Copie a Private Key de uma das contas listadas (ex: Account #0).
+2. Copie a Private Key de uma das contas listadas (ex: Account #0).
 
-        Exemplo de chave: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+* Exemplo de chave:
+``` 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80```
 
-    No navegador, cole a chave no campo de login e clique em Acessar Painel.
+3. No navegador, cole a chave no campo de login e clique em Acessar Painel.
 
-    Realize lançamentos:
+4. Realize lançamentos:
 
-        Tente fazer um Crédito (ex: 100).
+* Tente fazer um Crédito (ex: 100).
 
-        Tente fazer um Débito (ex: 50.50).
+* Tente fazer um Débito (ex: 50.50).
 
-        Tente fazer um Débito maior que o saldo (o sistema deve exibir erro).
+* Tente fazer um Débito maior que o saldo (o sistema deve exibir erro).
 
-🔄 Reiniciando o Desenvolvimento
+## 🔄 Reiniciando o Desenvolvimento
 
 Sempre que você reiniciar o npx hardhat node (Terminal 1), a blockchain é apagada. Para conectar o Frontend novamente, basta ir ao Terminal 2 e rodar:
-Bash
-
+```bash
 ./start_dev.sh
-
+```
 Isso publicará uma nova cópia do contrato e atualizará o React sem que você precise editar código.
-
-📄 Licença
-
-Este projeto está sob a licença MIT.
