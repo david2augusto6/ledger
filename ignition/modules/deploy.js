@@ -12,7 +12,7 @@ async function main() {
   await accounting.waitForDeployment();
 
   const address = await accounting.getAddress();
-  console.log("✅ Contrato deployado em:", address);
+  console.log("✅ Contrato implantado em:", address);
 
   // 3. AUTOMAÇÃO: Salvar o endereço no Frontend
   // Define o caminho onde o arquivo JSON será salvo (dentro do React)
