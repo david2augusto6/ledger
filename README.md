@@ -68,52 +68,10 @@ Este comando inicia um nó Ethereum local e gera 20 contas de teste com saldo fi
 
 ```bash
 npx hardhat node
-```    
-
-**⚠️ IMPORTANTE:** Não feche este terminal. Se fechar, a blockchain "reseta".
-
-**Passo 2:** Fazer o Deploy do Contrato (Terminal 2)
-
-Em vez de rodar o deploy manualmente, use o script de automação que criamos. Ele compila o contrato, faz o deploy e atualiza automaticamente o arquivo de configuração do React.
-
-```bash
-# No Linux/Mac/Git Bash
-./start_dev.sh
-
-# Ou manualmente via Hardhat:
-# npx hardhat run ignition/modules/deploy.js --network localhost
+npx hardhat ignition deploy ./ignition/modules/Lock.js
 ```
-
-**Passo 3:** Iniciar o Frontend (Terminal 3)
-```bash
-cd frontend
-npm start
-```
-O projeto abrirá em http://localhost:3000.
-
-## 🧪 Como Usar (Guia de Teste)
-
-1. Vá ao Terminal 1 (onde o npx hardhat node está rodando).
-
-2. Copie a Private Key de uma das contas listadas (ex: Account #0).
-
-* Exemplo de chave:
-``` 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80```
-
-3. No navegador, cole a chave no campo de login e clique em Acessar Painel.
-
-4. Realize lançamentos:
-
-* Tente fazer um Crédito (ex: 100).
-
-* Tente fazer um Débito (ex: 50.50).
-
-* Tente fazer um Débito maior que o saldo (o sistema deve exibir erro).
-
-## 🔄 Reiniciando o Desenvolvimento
-
-Sempre que você reiniciar o npx hardhat node (Terminal 1), a blockchain é apagada. Para conectar o Frontend novamente, basta ir ao Terminal 2 e rodar:
-```bash
-./start_dev.sh
-```
-Isso publicará uma nova cópia do contrato e atualizará o React sem que você precise editar código.
+# ledger_blockchain
+# ledger_blockchain
+# ledger_blockchain
+# ledger_blockchain
+# ledger_blockchain
