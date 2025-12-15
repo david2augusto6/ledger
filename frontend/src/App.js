@@ -15,13 +15,10 @@ function App() {
   const [contract, setContract] = useState(null); 
   const [currentUser, setCurrentUser] = useState(null);
   
-  // Estados para lista de usuários e tela de cadastro
   const [userList, setUserList] = useState([]);
   const [isRegistering, setIsRegistering] = useState(false);
   const [newName, setNewName] = useState("");
-  const [newRole, setNewRole] = useState("Contador");
 
-  // Estados de Dados
   const [balance, setBalance] = useState("0");
   const [ledgerCount, setLedgerCount] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -31,7 +28,6 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Carrega usuários do LocalStorage ao iniciar
   useEffect(() => {
     refreshUserList();
   }, []);
@@ -39,26 +35,38 @@ function App() {
   const refreshUserList = () => {
     const users = getRegisteredUsers();
     setUserList(users);
-    // Se não tiver nenhum usuário, força a tela de cadastro
     if (users.length === 0) setIsRegistering(true);
   };
 
-  // --- CADASTRO DE USUÁRIO ---
+  // --- FUNÇÃO AUXILIAR: Formata Data ---
+  const formatDate = (timestamp) => {
+    if (!timestamp) return "";
+    // O Blockchain retorna BigInt em segundos. Javascript usa milissegundos.
+    // Multiplicamos por 1000 para converter.
+    const date = new Date(Number(timestamp) * 1000);
+    
+    // Formata para o padrão brasileiro (DD/MM/AAAA HH:MM)
+    return date.toLocaleString('pt-BR', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: '2-digit', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+  };
+
   const handleRegister = () => {
     if (!newName) return alert("Digite um nome!");
     try {
-      const createdUser = registerUser(newName, newRole);
+      registerUser(newName);
       refreshUserList();
-      setIsRegistering(false); // Volta para login
+      setIsRegistering(false);
       setNewName("");
-      // Opcional: Já logar direto
-      // handleUserSelect(createdUser.privateKey);
     } catch (err) {
       alert(err.message);
     }
   };
 
-  // --- LOGIN ---
   const handleUserSelect = async (selectedPrivateKey) => {
     if (!selectedPrivateKey) return;
     if (selectedPrivateKey === "new") {
@@ -68,7 +76,6 @@ function App() {
 
     try {
       setError("");
-      
       const selectedUser = userList.find(u => u.privateKey === selectedPrivateKey);
       setCurrentUser(selectedUser);
 
@@ -107,7 +114,8 @@ function App() {
             description: tx.description,
             amountFormatted: ethers.formatEther(tx.amount), 
             isCredit: tx.isCredit,
-            userAddress: tx.user 
+            userAddress: tx.user,
+            timestamp: tx.timestamp // Pegamos o Timestamp bruto do contrato
         });
       }
       setTransactions(history);
@@ -150,7 +158,6 @@ function App() {
     }
   };
 
-  // Função para limpar usuários (Debug)
   const handleResetUsers = () => {
     if(window.confirm("Isso apagará todos os usuários cadastrados. Continuar?")) {
         clearUsers();
@@ -171,31 +178,18 @@ function App() {
       {!wallet ? (
         <div className="card login-card">
           {isRegistering ? (
-            // --- TELA DE CADASTRO ---
             <div>
               <h2>Novo Cadastro</h2>
               <p>Crie um usuário para acessar o sistema.</p>
-              
               <input 
-                placeholder="Nome Completo (Ex: João Silva)" 
+                placeholder="Nome Completo" 
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
               />
               
-              <select 
-                value={newRole} 
-                onChange={(e) => setNewRole(e.target.value)}
-                style={{width: "100%", padding: "10px", marginBottom: "10px", borderRadius: "6px", border: "1px solid #ddd"}}
-              >
-                <option value="Contador">Contador</option>
-                <option value="Auditor">Auditor</option>
-                <option value="Diretor">Diretor</option>
-              </select>
-
               <button onClick={handleRegister} style={{backgroundColor: "#27ae60", color: "white"}}>
                 Salvar e Voltar
               </button>
-              
               {userList.length > 0 && (
                 <button onClick={() => setIsRegistering(false)} style={{marginTop: "10px", background: "none", color: "#555", border: "1px solid #ccc"}}>
                   Cancelar
@@ -203,11 +197,9 @@ function App() {
               )}
             </div>
           ) : (
-            // --- TELA DE LOGIN ---
             <div>
               <h2>Login</h2>
               <p>Selecione seu usuário:</p>
-              
               <select 
                 onChange={(e) => handleUserSelect(e.target.value)}
                 style={{padding: "15px", width: "100%", fontSize: "1rem", borderRadius: "8px", border: "1px solid #ccc", marginBottom: "20px"}}
@@ -216,29 +208,26 @@ function App() {
                 <option value="" disabled>-- Selecione --</option>
                 {userList.map((user, index) => (
                   <option key={index} value={user.privateKey}>
-                    👤 {user.name} ({user.role})
+                    👤 {user.name}
                   </option>
                 ))}
                 <option value="new" style={{fontWeight: "bold", color: "blue"}}>+ CADASTRAR NOVO USUÁRIO</option>
               </select>
-
               <div style={{marginTop: "30px", fontSize: "0.8rem"}}>
                 <span style={{cursor: "pointer", color: "red"}} onClick={handleResetUsers}>Limpar base de usuários</span>
               </div>
             </div>
           )}
-          
           {error && <p className="error">{error}</p>}
         </div>
       ) : (
-        // --- DASHBOARD ---
         <div className="dashboard">
           <div className="status-bar">
             <div>
-              <strong>Usuário:</strong> <span style={{fontSize: "1.2rem"}}>👤 {currentUser?.name}</span> <small>({currentUser?.role})</small>
+              <strong>Usuário:</strong> <span style={{fontSize: "1.2rem"}}>👤 {currentUser?.name}</span>
             </div>
             <div style={{textAlign: "right"}}>
-              <strong>Saldo:</strong> <span className="big-number">$ {balance}</span>
+              <strong>Saldo:</strong> <span className="big-number">{balance}</span> ETH
             </div>
           </div>
 
@@ -264,6 +253,12 @@ function App() {
                       <div style={{fontSize: "0.9rem", color: "#555", marginTop: "4px"}}>
                         Feito por: <b>{getUserName(tx.userAddress)}</b>
                       </div>
+                      
+                      {/* --- AQUI ESTÁ A DATA E HORA --- */}
+                      <div style={{fontSize: "0.75rem", color: "#888", marginTop: "2px"}}>
+                        {formatDate(tx.timestamp)}
+                      </div>
+
                     </div>
                     <div className="tx-value">
                       {tx.isCredit ? "+" : "-"} {tx.amountFormatted}

@@ -35,7 +35,6 @@ export const registerUser = (name, role) => {
 
     const newUser = {
         name: name,
-        role: role,
         address: nextAccount.address,
         privateKey: nextAccount.privateKey,
         registeredAt: new Date().toISOString()
